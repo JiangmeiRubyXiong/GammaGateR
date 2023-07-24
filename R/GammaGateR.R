@@ -83,7 +83,7 @@ GammaGateRX = function(x, constraints=NULL, subBatch=NULL, nn0=200, ...){
   x = x[!naInds & !zeroInds ]
   u.region <- unique(subBatch)
   # fit without constraints if none are passed
-  if(sum(!zeroInds, na.rm=TRUE)>=nn0 & mean(naInds)!=1){
+  if((sum(!zeroInds, na.rm=TRUE)>=nn0 & mean(naInds)!=1)|mode(x)!="character"){
     if(is.null(constraints)){
       fit <- cfGMM::cfGMM(x, k=2, ...)
     } else {
