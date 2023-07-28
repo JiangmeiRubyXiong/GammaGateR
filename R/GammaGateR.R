@@ -93,7 +93,15 @@ GammaGateRX = function(x, constraints=NULL, subBatch=NULL, nn0=200, ...){
         fit <- cfGMM::cfGMM(x, k=2, constraint = constraints, ...)
       }
     }
-    fit <- monoZ(fit)
+    if(mode(fit)=="list"){
+      fit <- monoZ(fit)
+    }else{
+      fit = list(posterior=matrix(NA, nrow=sum(!zeroInds, na.rm=TRUE), ncol=2),
+                 lambda=rep(NA,2),
+                 gamma.pars=matrix(NA, nrow=2, ncol=2, dimnames=list(c('alpha', 'beta'))),
+                 convergence=NA)
+    }
+
   } else {
     # cfGMM not fit
     fit = list(posterior=matrix(NA, nrow=sum(!zeroInds, na.rm=TRUE), ncol=2),
