@@ -7,7 +7,7 @@
 convCheck(GammaGateR.fit, out.all = FALSE, return.result = FALSE)
 }
 \arguments{
-\item{GammaGateR.fit}{GammaGateR or groupGammaGateR object.}
+\item{GammaGateR.fit}{A GammaGateR or groupGammaGateR object.}
 
 \item{out.all}{Whether to print out the full convergence result for all markers and slides, or just summary of non-convergence.}
 

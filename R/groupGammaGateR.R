@@ -51,7 +51,7 @@ groupGammaGateR <- function(expressionMarkers, slide, boundaryMarkers=NULL, qbou
 #' @importFrom plotly plot_ly layout
 #' @details Various diagnostic and QC plots for groupGammaGateR fits.
 plotGroupGammaGateR <- function(x, marker=1, slide=1, component=2, diagnostic=TRUE, interactive=FALSE,
-                              histogram=FALSE, title=NULL, boundary = NULL,color='grey', print=TRUE, tabl=FALSE,  ...){
+                             histogram=FALSE, title=NULL, boundary = NULL,color='grey', print=TRUE, tabl=FALSE,  ...){
   markerind = marker
   if(is.numeric(marker)){marker=colnames(x[[1]][["expressionX"]])[marker] }
   if(diagnostic){
@@ -62,18 +62,18 @@ plotGroupGammaGateR <- function(x, marker=1, slide=1, component=2, diagnostic=TR
     if(interactive){
       plot.df$slide_id <- names(x)
       p1 <- plot_ly( plot.df, x = ~mode, y = ~lambda,
-                       marker = list(size = 10,color = 'rgba(255, 182, 193, .9)',
-                                     line = list(color = 'rgba(152, 0, 0, .8)',width = 2)),
-                       text = ~slide_id, type = "scatter", mode = 'markers')
+                     marker = list(size = 10,color = 'rgba(255, 182, 193, .9)',
+                                   line = list(color = 'rgba(152, 0, 0, .8)',width = 2)),
+                     text = ~slide_id, type = "scatter", mode = 'markers')
       p1 <- layout(p=p1, title = marker,
-                              yaxis = list(zeroline = FALSE),
-                              xaxis = list(zeroline = FALSE))
+                   yaxis = list(zeroline = FALSE),
+                   xaxis = list(zeroline = FALSE))
     }else{
       if(is.null(title)){title <- "Diagnostic Plot"}
       p1 <- ggplot(plot.df)+  geom_point(aes(x=mode,y=lambda), alpha=0.4, color=color, size=3) +
         xlab("Mode of Expressed Component")+ylab("Lambda of Expressed")+
         theme_ipsum(axis_title_size = 12) + ggtitle(title)
-      }
+    }
 
     if(print){
       print(p1)
@@ -116,7 +116,7 @@ plotGroupGammaGateR <- function(x, marker=1, slide=1, component=2, diagnostic=TR
 #' @export
 #' @details Various diagnostic and QC plots for groupGammaGateR fits.
 plot.groupGammaGateR <- function(x, marker=NULL, slide=NULL, component=2, diagnostic=TRUE, interactive=FALSE,
-                             histogram=FALSE, title=NULL, boundary = NULL,color='grey', print=TRUE, tabl=FALSE, ...){
+                              histogram=FALSE, title=NULL, boundary = NULL,color='grey', print=TRUE, tabl=FALSE, ...){
   if(is.numeric(marker)){marker=colnames(x[[1]][["expressionX"]])[marker] }
   if(diagnostic){
     if(is.null(marker)){markern=names(x[[1]][[1]])}else{markern=marker}

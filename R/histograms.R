@@ -128,12 +128,12 @@ hist_sr_constrast_inner <- function(fit1, fit2, marker=1, subBatch=1, title=NULL
 hist_sr_constrast <- function(fit1, fit2, marker=1, slide=1, subBatch=1, title=NULL, ...){
   if(any(class(fit1)!=class(fit2))){
     print("Two objects are not of same class! Please change input.")
-    } else if (class(fit1)[1]=="GammaGateR"){
-      marker.name <- names(fit1[[1]])[marker]
-      hist_sr_constrast_inner(fit1, fit2, marker=marker, subBatch=subBatch, title=title, ...)
-    } else if (class(fit1)[1]=="groupGammaGateR"){
-      hist_sr_constrast_inner(fit1[[slide]],fit2[[slide]], marker = marker, subBatch=subBatch, title = title )
-    } else {print("Invalid input class! Please change input.")}
+  } else if (class(fit1)[1]=="GammaGateR"){
+    marker.name <- names(fit1[[1]])[marker]
+    hist_sr_constrast_inner(fit1, fit2, marker=marker, subBatch=subBatch, title=title, ...)
+  } else if (class(fit1)[1]=="groupGammaGateR"){
+    hist_sr_constrast_inner(fit1[[slide]],fit2[[slide]], marker = marker, subBatch=subBatch, title = title )
+  } else {print("Invalid input class! Please change input.")}
 }
 
 

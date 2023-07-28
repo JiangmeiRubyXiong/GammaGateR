@@ -83,18 +83,14 @@ GammaGateRX = function(x, constraints=NULL, subBatch=NULL, nn0=200, ...){
   x = x[!naInds & !zeroInds ]
   u.region <- unique(subBatch)
   # fit without constraints if none are passed
-  if((sum(!zeroInds, na.rm=TRUE)>=nn0 & mean(naInds)!=1)|mode(x)=="list"){
+  if(sum(!zeroInds, na.rm=TRUE)>=nn0 & mean(naInds)!=1){
     if(is.null(constraints)){
       fit <- cfGMM::cfGMM(x, k=2, ...)
     } else {
       if(all(dim(constraints)!=c(2,2))){
         stop('constraints must be NULL or a 2x2 matrix.')
       } else {
-        if(mode(fit)=="list"){fit <- monoZ(fit)
-        }else{fit = list(posterior=matrix(NA, nrow=sum(!zeroInds, na.rm=TRUE), ncol=2),
-                         lambda=rep(NA,2),
-                         gamma.pars=matrix(NA, nrow=2, ncol=2, dimnames=list(c('alpha', 'beta'))),
-                         convergence=NA)}
+        fit <- cfGMM::cfGMM(x, k=2, constraint = constraints, ...)
       }
     }
     fit <- monoZ(fit)

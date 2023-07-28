@@ -2,7 +2,7 @@
 #'
 #' This needs to be run before any plot of fitted result being made.
 #'
-#' @param GammaGateR.fit GammaGateR or groupGammaGateR object.
+#' @param GammaGateR.fit A GammaGateR or groupGammaGateR object.
 #' @param out.all Whether to print out the full convergence result for all markers and slides, or just summary of non-convergence.
 #' @param return.result Whether to return the convergence result into an object.
 #' @return Returns simple printout or dataframe of convergence result, depending on argument input.
