@@ -23,7 +23,6 @@
 #' @export
 #' @details Fits cfGMM models to each marker channel in a matrix of marker channels for one slide
 GammaGateR <- function(expressionMarkers, boundaryMarkers=NULL, qboundaryMarkers=NULL, subBatch=NULL, ...){
-  # Jul24 1:57
   if(is.null(subBatch)) subBatch = rep(1, nrow(expressionMarkers))
   expressionMarkers = as.data.frame(expressionMarkers)
   # There could be better checks here
@@ -91,7 +90,11 @@ GammaGateRX = function(x, constraints=NULL, subBatch=NULL, nn0=200, ...){
       if(all(dim(constraints)!=c(2,2))){
         stop('constraints must be NULL or a 2x2 matrix.')
       } else {
-        fit <- cfGMM::cfGMM(x, k=2, constraint = constraints, ...)
+        if(mode(fit)=="list"){fit <- monoZ(fit)
+        }else{fit = list(posterior=matrix(NA, nrow=sum(!zeroInds, na.rm=TRUE), ncol=2),
+                         lambda=rep(NA,2),
+                         gamma.pars=matrix(NA, nrow=2, ncol=2, dimnames=list(c('alpha', 'beta'))),
+                         convergence=NA)}
       }
     }
     fit <- monoZ(fit)
