@@ -83,7 +83,7 @@ diag_contrast <- function(fit1, fit2, marker=1, component=2, title="Contrastive 
 
   p <-  ggplot()+
     geom_point(data=plot.df, aes(x=mode, y=lambda,color=fit),alpha=0.3, size=2.5)+
-    theme_ipsum()+ scale_color_manual(values=c("red","forestgreen","burlywood4"))+
+    theme_ipsum()+ scale_color_manual(values=c("forestgreen","red","burlywood4"))+
     geom_segment(data=connect.df, aes(x = x1, y = y1, xend = x2, yend = y2), linetype="dotted")
   if(!is.null(boundaries)){p <- geom_vline(xintercept = boundaries, color="red", linetype="dashed")}
   if(!is.null(title)){p <- p + ggtitle(title)}
