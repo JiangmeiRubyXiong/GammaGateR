@@ -43,6 +43,8 @@
 
 \item{print}{logical whether to display the plot. Default value TRUE.}
 
+\item{tabl}{logical. whether to include parameter table in the plot. Default value FALSE.}
+
 \item{...}{Arguments passed to XX}
 }
 \description{

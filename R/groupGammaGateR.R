@@ -43,6 +43,7 @@ groupGammaGateR <- function(expressionMarkers, slide, boundaryMarkers=NULL, qbou
 #' @param boundary Boundary (vertial dashed line) to be plotted on the histogram.
 #' @param color color for points.
 #' @param print logical whether to display the plot. Default value TRUE.
+#' @param tabl logical. whether to include parameter table in the plot. Default value FALSE.
 #' @param ... Arguments passed to XX
 #' @importFrom ggplot2 aes ggplot ggtitle stat_function geom_vline unit annotation_custom geom_point xlab ylab
 #' @importFrom hrbrthemes theme_ipsum
@@ -107,6 +108,7 @@ plotGroupGammaGateR <- function(x, marker=1, slide=1, component=2, diagnostic=TR
 #' @param boundary Boundary (vertial dashed line) to be plotted on the histogram.
 #' @param color color for points.
 #' @param print logical whether to display the plot. Default value TRUE.
+#' @param tabl logical. whether to include parameter table in the plot. Default value FALSE.
 #' @param ... Arguments passed to XX
 #' @importFrom ggplot2 aes ggplot ggtitle stat_function geom_vline unit annotation_custom geom_point xlab ylab
 #' @importFrom hrbrthemes theme_ipsum
@@ -172,6 +174,6 @@ collateGroupGammaGateR <- function(...){
       names(out.list)[[length(out.list)]] <- names(obj.i)[j]
     }
   }
-  class(out.list) = c('groupGammaGateR', class(constrCfGMMbunch))
+  class(out.list) = c('groupGammaGateR', 'list')
   return(out.list)
 }

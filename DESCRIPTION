@@ -1,12 +1,39 @@
 Package: GammaGateR
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Marker Gating for Cell-level Multiplexed Immunofluorescence Data
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: @R: c(
+    person("Jiangmei", "Xiong", role = c("aut", "cre"), 
+    email = "jiangmei.xiong@vanderbilt.edu"),
+    person("Simon", "Vandekar", role = c("aut", "cre"), email = "simon.vandekar@vumc.org")
+    )
+Maintainer: Jiangmei Xiong <jiangmei.xiong@vanderbilt.edu>
+Description: This package uses Gamma Mixture Model to semi-automate the marker gating process.    Interactive scatter plot and fitted model density curves can be generated as a reference for goodness of fit.    Adjusted rand index can be generated to compare marker gating result with manual label silver standard, if available.
+Depends: R (>= 3.5.0)
+Collate:
+    'GammaGateR.R'
+    'histograms.R'
+    'monoZ.R'
+    'groupGammaGateR.R'
+    'diag.R'
+Imports:
+  cfGMM,
+  hrbrthemes,
+  ggplot2,
+  gridExtra,
+  patchwork,
+  rlang,
+  parallel,
+  reactable,
+  plotly,
+  reshape2,
+  fossil
+RoxygenNote: 7.2.3
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
+Config/testthat/edition: 3
