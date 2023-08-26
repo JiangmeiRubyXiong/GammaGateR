@@ -1,5 +1,5 @@
 ---
-title: "Vignette - using GammaGateR with Vectra Polaris Data"
+title: "Vignette - How to use GammaGateR"
 date: <small>`r Sys.Date()`</small>
 header-includes:
   - \usepackage{subfig}
@@ -16,7 +16,7 @@ output:
     embed_fonts: no
     keep_md: false
     number_sections: true
-bibliography: fitDataPolaris.bib 
+bibliography: fitDataPolaris.bib
 vignette: >
   %\VignetteIndexEntry{my-vignette}
   %\VignetteEngine{knitr::rmarkdown}
@@ -120,13 +120,14 @@ names(quantileBoundaries) = names(boundaries) = nzNormedMarkers
 
 The groupGammaGateR function takes a data frame with the cell level data for each slide, a vector identifying slide membership, and list(s) of the boundaries on the expression or quantile scales. The `n.cores` argument can be used to run model fitting in parallel across slides.The last line saves the fitted model object as an `.RData` file.
 
-```{r groupGammaGateR}
+```{r groupGammaGateR, eval=FALSE}
 # fit cfGMM with groupGammaGateR
 groupPolarisFit <- groupGammaGateR(cell[,nzNormedMarkers], 
                                 slide = cell$slide_id,
                                  boundaryMarkers = boundaries,
                                 qboundaryMarkers=quantileBoundaries,
                                 n.cores = 8)
+save(groupPolarisFit, file="groupPolarisFit.RData")
 ```
 
 At this stage, checking if the model fits well through visualization has higher priority than extracting information in the output. The output structure will be explained in the later section.
@@ -136,6 +137,7 @@ At this stage, checking if the model fits well through visualization has higher 
 After fitting, `convCheck()` can be used to see if the model failed to converge in any slides or channels. The reason for non-convergence could be due to the constraints, or that too few observations are included in each slide. If the model fails to converge estimated parameters and probabilities are returned as NA.
 
 ```{r}
+load("groupPolarisFit.RData")
 convCheck(groupPolarisFit)
 ```
 
@@ -212,7 +214,7 @@ Here are a few observation based on the model diagnostic plots and slide histogr
 
 The following constraints reflects the changes. 
 
-```{r}
+```{r eval=FALSE}
 # set up boundary for all markers
 quantileBoundaries2 = list(matrix(c(0,.8, .9, 1), byrow = TRUE, nrow=2),
                           matrix(c(0,.7, .8, 1), byrow = TRUE, nrow=2),
@@ -238,10 +240,12 @@ groupPolarisFit2 <- groupGammaGateR(cell[,nzNormedMarkers],
                                  boundaryMarkers = boundaries2,
                                 qboundaryMarkers=quantileBoundaries2,
                                 n.cores = 8)
+save(groupPolarisFit2, file="groupPolarisFit2.RData")
 ```
 
 Again, we need to check if all models converged.
 ```{r}
+load("groupPolarisFit2.RData")
 convCheck(groupPolarisFit2)
 ```
 
@@ -537,3 +541,4 @@ legend("bottomright", legend = c("astir","base", "GammaGateR_marginal", "GammaGa
   ggplot() + ggtitle("hladr Normalized")+
   geom_freqpoly(data=slidetest, aes(nzNorm_entire_cell_hladr_opal_690_total,y=after_stat(density), color=slide_id,group=slide_id), binwidth = 0.05, alpha=0.2, linewidth=0.5)+theme_ipsum()+xlab("Expression")
 ```
+
