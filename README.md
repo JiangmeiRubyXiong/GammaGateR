@@ -8,3 +8,7 @@ Install GammaGateR:
 ```
 devtools::install_github("JiangmeiRubyXiong/GammaGateR")
 ```
+Vignette for this package: run this line in R console:
+```
+vignette(package="GammaGateR")
+```
