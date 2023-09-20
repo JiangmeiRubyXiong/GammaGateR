@@ -1,4 +1,4 @@
-# GammaGateR
+# GammaGateR <img src="logoGammaGateR.png" align="right" height = "150" />
 
 Install cfGMM prior to installing GammaGateR:
 ```
