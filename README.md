@@ -4,11 +4,11 @@ Install cfGMM prior to installing GammaGateR:
 ```
 devtools::install_github("JiangmeiRubyXiong/cfGMM")
 ```
-Install GammaGateR:
+Install GammaGateR: (vignette build might take a while)
 ```
-devtools::install_github("JiangmeiRubyXiong/GammaGateR")
+devtools::install_github("JiangmeiRubyXiong/GammaGateR", build_vignettes = TRUE)
 ```
 Vignette for this package: run this line in R console:
 ```
-vignette(package="GammaGateR")
+vignette("my-vignette",package="GammaGateR")
 ```
