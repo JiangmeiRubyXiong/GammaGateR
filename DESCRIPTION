@@ -28,7 +28,10 @@ Imports:
   plotly,
   reshape2,
   fossil,
-  ggpubr
+  ggpubr,
+  rmdformats,
+  VectraPolarisData,
+  BiocManager
 RoxygenNote: 7.2.3
 Suggests: 
     knitr,

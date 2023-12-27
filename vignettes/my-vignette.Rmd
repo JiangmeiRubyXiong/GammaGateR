@@ -44,7 +44,7 @@ GammaGateR is a semi-automated soft marker-gating procedure designed specificall
 
 # Loading mIF data from `VectraPolarisData`
 
-The `VectraPolarisData` package on Bioconductor contains multiplex immunohistochemistry (mIHC) in a sample of 153 patients with small cell lung cancer[@johnson2021cancer;@VectraPolarisData]. To download the dataset, follow the instruction at https://bioconductor.org/packages/release/data/experiment/html/VectraPolarisData.html. After installation, run the following to store data as the `cell` object. The data is are cell-level, meaning that each row of the data represents a single cell.
+The `VectraPolarisData` package on Bioconductor contains multiplex immunohistochemistry (mIHC) in a sample of 153 patients with small cell lung cancer[@johnson2021cancer;@VectraPolarisData]. To download the dataset, follow the instruction at the [package site](https://bioconductor.org/packages/release/data/experiment/html/VectraPolarisData.html). After installation, run the following to store data as the `cell` object. The data is are cell-level, meaning that each row of the data represents a single cell.
 
 ```{r, message=FALSE, warning=FALSE}
 library(VectraPolarisData)
@@ -53,6 +53,14 @@ spe_lung <- HumanLungCancerV3()
 cell = cbind(as.data.frame(colData(spe_lung)), as.data.frame(spatialCoords(spe_lung)) )
 ```
 
+For the purpose of building the vignette without exhausting all your computational power, this vignette will only use a subset of the dataset for demonstration.
+
+```{r}
+slides <- unique(cell$slide_id)[1:15]
+cell <- cell[cell$slide_id %in% slides,]
+```
+
+
 # Prepare the data for GammaGateR
 
 ## Normalization and Visualization {.tabset}
@@ -60,7 +68,7 @@ cell = cbind(as.data.frame(colData(spe_lung)), as.data.frame(spatialCoords(spe_l
 Before fitting the model, the expression levels should be normalized to reduce batch effects and variation among slides. We use a log normalization, based on prior work [@harris2022quantifying].
 
 ```{r preprocessing}
-allMarkers = grep('^entire_cell_.*total$', names(cell), value=TRUE)
+allMarkers = grep('^entire_cell_.*total$', names(cell), value=TRUE)[2:4]
 # normalize the data 
 nzNormedMarkers = paste0('nzNorm_',allMarkers)
 cell = do.call(rbind, lapply(split(cell, cell$slide_id), function(df){df[,nzNormedMarkers] = log10(1+sweep(df[,allMarkers], 2, colMeans(replace(df[,allMarkers], df[,allMarkers]==0, NA), na.rm = TRUE ), FUN = '/' ) ); df }) )
@@ -87,31 +95,21 @@ for(i in 1:length(allMarkers)){
 
 Different constraints can be selected for each marker but should be the same for all slides in the same channel. There are two ways to identify the constraints: by specifying a quantile or a particular value on the x-axis. For example, when setting the upp. Both can be passed as arguments to the GammaGateR function, and when applied to the slide, the threshold with the wider range will be chosen by the function automatically.
 
-The quantile boundaries can be determined if there are known ranges for the proportions of positive cells, though these values don’t map specifically to constraints on the estimated cell proportions. The constraints are passed to the groupGammaGateR function as a list. Each constraint is specified with a 2x2 matrix, where the rows correspond to the unexpressed and expressed cell populations, and the columns are the lower and upper constraints, respectively. For example, the first constraint in quantileBoundaries restricts the mode of the unexpressed cells to be between the 0th and 80th quantiles of the expression distribution and the expressed cell mode between the 90th and 100th quantiles. The order of the markers is as shown in the histograms above. If no reasonable constraint can be determined for a marker, it can be left blank. 
+The quantile boundaries can be determined if there are known ranges for the proportions of positive cells, though these values don’t map specifically to constraints on the estimated cell proportions. The constraints are passed to the groupGammaGateR function as a list. Each constraint is specified with a 2x2 matrix, where the rows correspond to the unexpressed and expressed cell populations, and the columns are the lower and upper constraints, respectively. For example, the first constraint in quantileBoundaries restricts the mode of the unexpressed cells to be between the 0th and 70th quantiles of the expression distribution and the expressed cell mode between the 80th and 100th quantiles. The order of the markers is as shown in the histograms above. If no reasonable constraint can be determined for a marker, it can be left blank. 
 
-Constraints can also be specified according to values on the x-axis of the histograms. For example, the mode for the unexpressed cells for the HLADR marker in the is constrained between 0 and 0.3 and the mode for the expressed cells is constrained between 0.45 and infinity. This ensures that the modes of the two estimated distributions are separated by a gap of 0.15.  
+Constraints can also be specified according to values on the x-axis of the histograms. For example, the mode for the unexpressed cells for the CD8 marker in the is constrained between 0 and 0.25 and the mode for the expressed cells is constrained between 0.3 and infinity. This ensures that the modes of the two estimated distributions are separated by a gap of 0.05.  
 
 The last line of the code assigns the names of the constraints to keep track of which were used for which markers. groupGammagater does not use the names of the constraints in fitting, but assumes the order of the constraints matches the order of the columns of the input data.
 
 
 ```{r}
 # set up boundary for all markers
-quantileBoundaries = list(matrix(c(0,.8, .9, 1), byrow = TRUE, nrow=2),
-                          matrix(c(0,.7, .8, 1), byrow = TRUE, nrow=2),
+quantileBoundaries = list(matrix(c(0,.7, .8, 1), byrow = TRUE, nrow=2),
                           matrix(c(0,.6, .8, 1), byrow = TRUE, nrow=2),
-                          matrix(c(0,.6, .8, 1), byrow = TRUE, nrow=2),
-                          matrix(c(0,.7, .8, 1), byrow = TRUE, nrow=2),
-                          NULL,
-                          NULL,
-                          NULL)
-boundaries = list(matrix(c(0,.3, .5, 1), byrow = TRUE, nrow=2),
+                          matrix(c(0,.6, .8, 1), byrow = TRUE, nrow=2))
+boundaries = list(NULL,
                   NULL,
-                  NULL,
-                  NULL,
-                  matrix(c(0,.3, .45, Inf), byrow = TRUE, nrow=2),
-                  matrix(c(0,.3, .5, Inf), byrow = TRUE, nrow=2),
-                  matrix(c(0,.4, .45, Inf), byrow = TRUE, nrow=2),
-                  NULL)
+                  matrix(c(0,.25, .3, 1), byrow = TRUE, nrow=2))
 names(quantileBoundaries) = names(boundaries) = nzNormedMarkers
 ```
 
@@ -120,14 +118,14 @@ names(quantileBoundaries) = names(boundaries) = nzNormedMarkers
 
 The groupGammaGateR function takes a data frame with the cell level data for each slide, a vector identifying slide membership, and list(s) of the boundaries on the expression or quantile scales. The `n.cores` argument can be used to run model fitting in parallel across slides.The last line saves the fitted model object as an `.RData` file.
 
-```{r groupGammaGateR}
+```{r groupGammaGateR, eval=FALSE}
 # fit cfGMM with groupGammaGateR
 groupPolarisFit <- groupGammaGateR(cell[,nzNormedMarkers], 
                                 slide = cell$slide_id,
                                  boundaryMarkers = boundaries,
                                 qboundaryMarkers=quantileBoundaries,
-                                n.cores = 8)
-# save(groupPolarisFit, file="groupPolarisFit.RData")
+                                n.cores = 3)
+save(groupPolarisFit, file="groupPolarisFit.RData")
 ```
 
 At this stage, checking if the model fits well through visualization has higher priority than extracting information in the output. The output structure will be explained in the later section.
@@ -137,23 +135,10 @@ At this stage, checking if the model fits well through visualization has higher 
 After fitting, `convCheck()` can be used to see if the model failed to converge in any slides or channels. The reason for non-convergence could be due to the constraints, or that too few observations are included in each slide. If the model fails to converge estimated parameters and probabilities are returned as NA.
 
 ```{r}
-# load("groupPolarisFit.RData")
+load("groupPolarisFit.RData")
 convCheck(groupPolarisFit)
 ```
 
-The reason for non-convergence could be bad threshold, or that too few observations are included in each slide. This can be checked by examining the density distribution of the expression value of the slide:
-
-```{r}
-par(mfrow=c(2,2))
-hist(cell$nzNorm_entire_cell_dapi_dapi_total[cell$slide_id=="#24 5-261-485"],
-     xlab="Expression Values", main="dapi_#24 5-261-485", freq = FALSE)
-hist(cell$nzNorm_entire_cell_dapi_dapi_total[cell$slide_id=="#55 6-231-821"],
-     xlab="Expression Values", main="dapi_#55 6-231-821", freq = FALSE)
-hist(cell$nzNorm_entire_cell_cd19_opal_650_total[cell$slide_id=="#83 6-404-198"],
-     xlab="Expression Values", main="cd19_#83 6-404-198", freq = FALSE)
-```
-
-By comparing the histogram layout, it appears that the boundaries might be too stringent for these slides. We can keep this in mind, and modify the boundaries in the next round of model fitting.
 
 ## Diagnostic Plots {.tabset}
 
@@ -184,10 +169,11 @@ The individual density curves of fitted models for each slide can be used to fur
    - The fitted gamma density curve for the two components.
    - The histogram of actual normalized pixel value. Plotted in the back for comparison. 
 2. The table: shows the estimated parameters for the model.
-   - Components 0-2 correspond to the estimates for the zeros, unexpressed, and expressed cells.      - Lambda represents the estimated proportion of cells in that group
+   - Components 0-2 correspond to the estimates for the zeros, unexpressed, and expressed cells.
+   - Lambda represents the estimated proportion of cells in that group
    - Alpha and beta parameters are the estimates for that control the shape of the distribution for that component. 
-   -  Also included model convergence on the boundary or not
-   -  Mode of each component. This can to some extent show whether adjusting the boundary can help improve the fitted models.
+   - Also included model convergence on the boundary or not
+   - Mode of each component. This can to some extent show whether adjusting the boundary can help improve the fitted models.
    
 The fitted curves of the model should approximately align with the histogram. In addition, we expect that the marker-positive cell distribution should sit to the right of the unexpressed cells. This is not always possible if the amount of noise in the dataset is too much to distinguish expressed and unexpressed cells. For the purpose of display, only histograms of 4 slides are displyed for each marker. Users can print out the rest of the histograms, if they wish to, by modifying the `slide` argument of the plot function.
 
@@ -206,32 +192,19 @@ for (i in (nzNormedMarkers)){
 
 #	Refitting the models
 
-Here are a few observation based on the model diagnostic plots and slide histograms:
-
-- CD14 and CD8 could use a lower boundary constraint of 0.5 for the expressed cells, e.g. 0.4.
-- Lower bound of CK marker should be set to 0.25, because it looks like it’s missing some expressed cell distributions and most slides are at the boundary.
-- CD19 and DAPI should use lower boundary constraint.
+Based on the model diagnostic plots and slide histograms, we can see that CD14 and CD8 could use a lower boundary constraint of 0.5 for the expressed cells, e.g. 0.4.
 
 The following constraints reflects the changes. 
 
-```{r}
+```{r eval=FALSE}
 # set up boundary for all markers
-quantileBoundaries2 = list(matrix(c(0,.8, .9, 1), byrow = TRUE, nrow=2),
-                          matrix(c(0,.7, .8, 1), byrow = TRUE, nrow=2),
+quantileBoundaries2 = list(matrix(c(0,.7, .8, 1), byrow = TRUE, nrow=2),
                           matrix(c(0,.6, .8, 1), byrow = TRUE, nrow=2),
-                          matrix(c(0,.6, .8, 1), byrow = TRUE, nrow=2),
-                          matrix(c(0,.7, .8, 1), byrow = TRUE, nrow=2),
-                          NULL,
-                          matrix(c(0,.7, .9, 1), byrow = TRUE, nrow=2),
-                          NULL)
-boundaries2 = list(matrix(c(0,.45, .45, 1), byrow = TRUE, nrow=2),
-                  matrix(c(0,.4, .4, Inf), byrow = TRUE, nrow=2),
+                          matrix(c(0,.6, .8, 1), byrow = TRUE, nrow=2))
+
+boundaries2 = list(matrix(c(0,.4, .4, Inf), byrow = TRUE, nrow=2),
                   matrix(c(0,.4, .6, 1), byrow = TRUE, nrow=2),
-                  matrix(c(0,.4, .5, 1), byrow = TRUE, nrow=2),
-                  matrix(c(0,.3, .5, Inf), byrow = TRUE, nrow=2),
-                  matrix(c(0,.25, .25, Inf), byrow = TRUE, nrow=2),
-                  matrix(c(0,.4, .4, Inf), byrow = TRUE, nrow=2),
-                  matrix(c(0,.4, .4, Inf), byrow = TRUE, nrow=2))
+                  matrix(c(0,.4, .5, 1), byrow = TRUE, nrow=2))
 names(quantileBoundaries2) = names(boundaries2) = nzNormedMarkers
 
 # refit cfGMM with groupGammaGateR
@@ -239,13 +212,13 @@ groupPolarisFit2 <- groupGammaGateR(cell[,nzNormedMarkers],
                                 slide = cell$slide_id,
                                  boundaryMarkers = boundaries2,
                                 qboundaryMarkers=quantileBoundaries2,
-                                n.cores = 8)
-# save(groupPolarisFit2, file="groupPolarisFit2.RData")
+                                n.cores = 3)
+save(groupPolarisFit2, file="groupPolarisFit2.RData")
 ```
 
 Again, we need to check if all models converged.
 ```{r}
-# load("groupPolarisFit2.RData")
+load("groupPolarisFit2.RData")
 convCheck(groupPolarisFit2)
 ```
 
@@ -271,17 +244,12 @@ for (i in nzNormedMarkers){
 
 In `hist_sr_contrast`, the histogram is plotted very similar to the `plot` function previously. In order to compare the results, the density curve of both models are plot in the same histogram, color coded the same way as in the contrastive diagnostic plot: green is the first fit object and red is the second fit object. This provides a closer look to the individual slide fittings.
 
-```{r results='asis', warning=FALSE, fig.height=10, fig.width=15}
+```{r results='asis', warning=FALSE}
 for (i in nzNormedMarkers){
   mkr.name <- strsplit(i, split="_")[[1]][4]
   cat('\n### ', mkr.name, " \n")
-  temp1 <- groupPolarisFit[1:4]
-  class(temp1) <- "groupGammaGateR"
-  temp2 <- groupPolarisFit2[1:4]
-  class(temp2) <- "groupGammaGateR"
-  plotss <- list()
-  for(j in 1:4){
-    plotss[[j]] <- hist_sr_constrast(temp1 ,temp2, marker=i, slide=j ,diagnostic=FALSE, histogram=TRUE, print=FALSE, tabl=TRUE)
+  for(j in 4:7){
+    plotss <- hist_sr_constrast(groupPolarisFit, groupPolarisFit2, marker=i, slide=j ,diagnostic=FALSE, histogram=TRUE, print=TRUE, tabl=TRUE)
   }
   cat('\n\n')
 }
@@ -317,7 +285,8 @@ post_all <- do.call(rbind, (lapply(groupPolarisFit2, "[[", "expressionZ")))
 In the examples we demonstrated in paper, posterior probability always outperforms marginal probability. However, marginal probability might be a more reasonable choice when the distribution is unimodal. In this scenario, the two components in the mixture model will appear to be overlapping a lot and the posterior probability will be zero for all cells.
 
 ```{r}
-ploti <- plot(groupPolarisFit2, slide="#84 6-409-858", marker="nzNorm_entire_cell_autofluorescence_total", diagnostic=FALSE, histogram=TRUE)
+ploti <- plot(groupPolarisFit2, slide="#04 2-223-153",
+              marker="nzNorm_entire_cell_cd14_opal_540_total", diagnostic=FALSE, histogram=TRUE)
 ```
 
 
