@@ -29,9 +29,7 @@ Imports:
   reshape2,
   fossil,
   ggpubr,
-  rmdformats,
-  VectraPolarisData,
-  BiocManager
+  rmdformats
 RoxygenNote: 7.2.3
 Suggests: 
     knitr,
