@@ -10,7 +10,7 @@ groupGammaGateR(
   boundaryMarkers = NULL,
   qboundaryMarkers = NULL,
   subBatch = NULL,
-  n.cores = NULL,
+  n.cores = 1,
   ...
 )
 }
@@ -25,7 +25,7 @@ groupGammaGateR(
 
 \item{subBatch}{If there are multiple subBatch on a slide, subBatch can be used to return probability estimates independently for each region.}
 
-\item{n.cores}{Number of cores. Default to one less than the number of cores available on the machine.}
+\item{n.cores}{Number of cores. Default to one core.}
 
 \item{...}{Arguments passed to GammaGateR.}
 }

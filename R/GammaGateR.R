@@ -99,7 +99,7 @@ GammaGateRX = function(x, constraints=NULL, subBatch=NULL, nn0=200, ...){
       fit = list(posterior=matrix(NA, nrow=sum(!zeroInds, na.rm=TRUE), ncol=2),
                  lambda=rep(NA,2),
                  gamma.pars=matrix(NA, nrow=2, ncol=2, dimnames=list(c('alpha', 'beta'))),
-                 convergence=NA)
+                 convergence=FALSE, message="Bad starting value or threshold. Check your data!")
     }
 
   } else {
@@ -107,7 +107,7 @@ GammaGateRX = function(x, constraints=NULL, subBatch=NULL, nn0=200, ...){
     fit = list(posterior=matrix(NA, nrow=sum(!zeroInds, na.rm=TRUE), ncol=2),
                lambda=rep(NA,2),
                gamma.pars=matrix(NA, nrow=2, ncol=2, dimnames=list(c('alpha', 'beta'))),
-               convergence=NA)
+               convergence=NA, message=paste("Model not fitted due to small number of expressed cells less than", nn0))
   }
 
   post.prob <- data.frame(factor=subBatch[!naInds & !zeroInds], value=fit$posterior)
