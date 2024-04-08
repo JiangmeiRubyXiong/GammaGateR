@@ -9,7 +9,9 @@ evaluateGroupGammaGateR(
   standard,
   batch,
   method = c("cohen", "rand"),
-  plot.type = c("boxplot", "scatter")
+  plot.type = c("boxplot", "scatter"),
+  fig.title = NULL,
+  legend.title = NULL
 )
 }
 \arguments{
@@ -22,6 +24,10 @@ evaluateGroupGammaGateR(
 \item{method}{"cohen" the default, calculates cohen's kappa; "rand" calculates adjusted rand index.}
 
 \item{plot.type}{"boxplot" the default; recommend "scatter" when number of slides is small.}
+
+\item{fig.title}{"compared to Silver Standard" the default}
+
+\item{legend.title}{"method" the default}
 }
 \description{
 This function can compare the agreement of classification result against a gold/silver standard.

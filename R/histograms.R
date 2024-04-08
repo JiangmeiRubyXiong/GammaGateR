@@ -146,6 +146,8 @@ hist_sr_constrast <- function(fit1, fit2, marker=1, slide=1, subBatch=1, title=N
 #' @param batch Split kappa computation by this variable. Similar to slide_id.
 #' @param method "cohen" the default, calculates cohen's kappa; "rand" calculates adjusted rand index.
 #' @param plot.type "boxplot" the default; recommend "scatter" when number of slides is small.
+#' @param fig.title "compared to Silver Standard" the default
+#' @param legend.title "method" the default
 #' @importFrom stats dgamma
 #' @importFrom ggplot2 aes ggplot ggtitle geom_histogram after_stat stat_function geom_vline unit annotation_custom geom_boxplot coord_flip ylab xlab geom_jitter
 #' @importFrom rlang UQ
@@ -157,7 +159,7 @@ hist_sr_constrast <- function(fit1, fit2, marker=1, slide=1, subBatch=1, title=N
 #' @export
 #' @details Plot a histogram of a GammaGateR model. Plots one model.
 #' Takes a GammaGateR object and plots the histogram with the fitted model and parameter values.
-evaluateGroupGammaGateR = function(..., standard, batch, method=c("cohen", "rand"), plot.type=c("boxplot", "scatter")){
+evaluateGroupGammaGateR = function(..., standard, batch, method=c("cohen", "rand"), plot.type=c("boxplot", "scatter"), fig.title=NULL, legend.title=NULL){
   standard = as.data.frame(standard)
   # cohen's kappa
   x = lapply(list(...), as.data.frame)
@@ -197,12 +199,14 @@ evaluateGroupGammaGateR = function(..., standard, batch, method=c("cohen", "rand
 
   ttl <- ifelse(method=="cohen", "Cohen's Kappa \ncompared to Silver Standard", "Adjusted Rand Index \ncompared to Silver Standard")
   p <- ggplot() + theme_ipsum(plot_title_size = 10,base_size = 8)
+  if(is.null(fig.title)){fig.title <- ttl}
+  if(is.null(legend.title)){legend.title <- "methods"}
   if(plot.type=="scatter"){
-    p <- p + coord_flip()+ geom_jitter(data=idx.plot, aes(x=marker, y=idx.method, color=method), alpha=0.3)+
-      ggtitle(ttl)+xlab("Marker")+ylab(method)
+    p <- p + coord_flip()+ geom_jitter(data=idx.plot, aes(x=marker, y=idx.method, fill=method), alpha=0.3)+
+      ggtitle(fig.title)+xlab("Marker")+ylab(method)+ scale_fill_discrete(name = legend.title)
   } else {
-    p <- p + coord_flip()+ geom_boxplot(data=idx.plot, aes(x=marker, y=idx.method, color=method), width=0.7, alpha=0.3)+
-      ggtitle(ttl)+xlab("Marker")+ylab(method)
+    p <- p + coord_flip()+ geom_boxplot(data=idx.plot, aes(x=marker, y=idx.method, fill=method), width=0.7, alpha=0.3)+
+      ggtitle(fig.title)+xlab("Marker")+ylab(method)+ scale_fill_discrete(name = legend.title)
   }
   print(p)
   return(idx.df)
