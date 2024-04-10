@@ -203,10 +203,10 @@ evaluateGroupGammaGateR = function(..., standard, batch, method=c("cohen", "rand
   if(is.null(fig.title)){fig.title <- ttl}
   if(is.null(legend.title)){legend.title <- "methods"}
   if(plot.type=="scatter"){
-    p <- p + coord_flip()+ geom_jitter(data=idx.plot, aes(x=marker, y=idx.method, fill=method), alpha=0.3)+
+    p <- p + coord_flip()+ geom_jitter(data=idx.plot, aes(x=marker, y=idx.method, fill=method, color=method), alpha=0.3)+
       ggtitle(fig.title)+xlab("Marker")+ylab(method)+ scale_fill_discrete(name = legend.title)
   } else {
-    p <- p + coord_flip()+ geom_boxplot(data=idx.plot, aes(x=marker, y=idx.method, fill=method), width=0.7, alpha=0.3)+
+    p <- p + coord_flip()+ geom_boxplot(data=idx.plot, aes(x=marker, y=idx.method, fill=method, color=method), width=0.7, alpha=0.3)+
       ggtitle(fig.title)+xlab("Marker")+ylab(method)+ scale_fill_discrete(name = legend.title)
   }
   print(p)
