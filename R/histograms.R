@@ -148,6 +148,7 @@ hist_sr_constrast <- function(fit1, fit2, marker=1, slide=1, subBatch=1, title=N
 #' @param plot.type "boxplot" the default; recommend "scatter" when number of slides is small.
 #' @param fig.title "compared to Silver Standard" the default
 #' @param legend.title "method" the default
+#' @param figure.return return the ggplot object ONLY. Default is FALSE
 #' @importFrom stats dgamma
 #' @importFrom ggplot2 aes ggplot ggtitle geom_histogram after_stat stat_function geom_vline unit annotation_custom geom_boxplot coord_flip ylab xlab geom_jitter
 #' @importFrom rlang UQ
@@ -159,7 +160,7 @@ hist_sr_constrast <- function(fit1, fit2, marker=1, slide=1, subBatch=1, title=N
 #' @export
 #' @details Plot a histogram of a GammaGateR model. Plots one model.
 #' Takes a GammaGateR object and plots the histogram with the fitted model and parameter values.
-evaluateGroupGammaGateR = function(..., standard, batch, method=c("cohen", "rand"), plot.type=c("boxplot", "scatter"), fig.title=NULL, legend.title=NULL){
+evaluateGroupGammaGateR = function(..., standard, batch, method=c("cohen", "rand"), plot.type=c("boxplot", "scatter"), fig.title=NULL, legend.title=NULL, figure.return=FALSE){
   standard = as.data.frame(standard)
   # cohen's kappa
   x = lapply(list(...), as.data.frame)
@@ -209,7 +210,12 @@ evaluateGroupGammaGateR = function(..., standard, batch, method=c("cohen", "rand
       ggtitle(fig.title)+xlab("Marker")+ylab(method)+ scale_fill_discrete(name = legend.title)
   }
   print(p)
-  return(idx.df)
+  if(figure.return){
+    return(p)
+  } else {
+    return(idx.df)
+  }
+
 }
 
 

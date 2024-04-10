@@ -11,7 +11,8 @@ evaluateGroupGammaGateR(
   method = c("cohen", "rand"),
   plot.type = c("boxplot", "scatter"),
   fig.title = NULL,
-  legend.title = NULL
+  legend.title = NULL,
+  figure.return = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ evaluateGroupGammaGateR(
 \item{fig.title}{"compared to Silver Standard" the default}
 
 \item{legend.title}{"method" the default}
+
+\item{figure.return}{return the ggplot object ONLY. Default is FALSE}
 }
 \description{
 This function can compare the agreement of classification result against a gold/silver standard.
