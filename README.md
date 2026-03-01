@@ -14,4 +14,4 @@ To run the example in the vignette, Bioconductor installation is needed to load 
 
 Paper now published [here](https://doi.org/10.1093/bioinformatics/btae356).
 
-Paper is featured in [National Cancer Intitute News](https://www.cancer.gov/about-nci/organization/cbiit/news-events/news/2024/gammagater-helps-decipher-imaging-data).
+Paper is featured in [National Cancer Institute News](https://www.cancer.gov/about-nci/organization/cbiit/news-events/news/2024/gammagater-helps-decipher-imaging-data).
